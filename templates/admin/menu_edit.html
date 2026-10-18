@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}编辑菜品 - 餐厅点餐系统{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning">
+                <h4 class="mb-0"><i class="bi bi-pencil"></i> 编辑菜品</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.menu_edit', item_id=item.item_id) }}">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="name" class="form-label">
+                                菜品名称 <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ item.name }}" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="category_id" class="form-label">
+                                分类 <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="category_id" name="category_id" required>
+                                {% for category in categories %}
+                                <option value="{{ category.category_id }}" 
+                                        {% if category.category_id == item.category_id %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="description" class="form-label">菜品描述</label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="3">{{ item.description or '' }}</textarea>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="price" class="form-label">
+                                价格(元) <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" class="form-control" id="price" name="price" 
+                                   step="0.01" min="0" value="{{ item.price }}" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">当前图片</label>
+                            <div>
+                                <img src="{{ item.image_url }}" alt="{{ item.name }}" 
+                                     class="img-thumbnail" style="max-width: 150px;"
+                                     onerror="this.src='/static/images/default.jpg'">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_recommend" 
+                                       name="is_recommend" value="1" 
+                                       {% if item.is_recommend %}checked{% endif %}>
+                                <label class="form-check-label" for="is_recommend">
+                                    <i class="bi bi-star"></i> 推荐菜品
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_available" 
+                                       name="is_available" value="1" 
+                                       {% if item.is_available %}checked{% endif %}>
+                                <label class="form-check-label" for="is_available">
+                                    <i class="bi bi-check-circle"></i> 上架状态
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin.menu_manage') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> 返回
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-circle"></i> 保存修改
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

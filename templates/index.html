@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 餐厅点餐系统{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <i class="bi bi-shop display-1 text-primary"></i>
+            <h1 class="display-4 fw-bold mt-3">欢迎使用餐厅点餐系统</h1>
+            <p class="lead text-muted mt-3">
+                现代化的在线点餐平台，让用餐更便捷
+            </p>
+            
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mt-5">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-box-arrow-in-right"></i> 登录
+                </a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary btn-lg px-5">
+                    <i class="bi bi-person-plus"></i> 注册
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 g-4">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-lightning-charge display-4 text-primary"></i>
+                <h5 class="card-title mt-3">快速点餐</h5>
+                <p class="card-text text-muted">
+                    简洁的界面设计，一键加入购物车，下单快人一步
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-cash-coin display-4 text-success"></i>
+                <h5 class="card-title mt-3">多种支付</h5>
+                <p class="card-text text-muted">
+                    支持微信、支付宝、现金等多种支付方式
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-star display-4 text-warning"></i>
+                <h5 class="card-title mt-3">推荐菜品</h5>
+                <p class="card-text text-muted">
+                    智能推荐热门菜品，帮您快速做出选择
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5 p-5 bg-light rounded-3">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h2 class="fw-bold">系统功能特色</h2>
+            <ul class="list-unstyled mt-4">
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>菜品管理：</strong>支持菜品的增删改查，分类管理
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>订单管理：</strong>实时订单跟踪，状态管理
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>桌台管理：</strong>智能桌台分配，状态实时更新
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>数据统计：</strong>销售统计，数据分析报表
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            <div class="p-4 bg-white rounded shadow-sm">
+                <h4 class="text-center mb-4">技术栈</h4>
+                <div class="row g-3 text-center">
+                    <div class="col-6">
+                        <div class="p-3 bg-primary bg-opacity-10 rounded">
+                            <i class="bi bi-code-square display-6 text-primary"></i>
+                            <p class="mb-0 mt-2"><strong>Flask</strong></p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-success bg-opacity-10 rounded">
+                            <i class="bi bi-database display-6 text-success"></i>
+                            <p class="mb-0 mt-2"><strong>MySQL</strong></p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-info bg-opacity-10 rounded">
+                            <i class="bi bi-palette display-6 text-info"></i>
+                            <p class="mb-0 mt-2"><strong>Bootstrap 5</strong></p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-warning bg-opacity-10 rounded">
+                            <i class="bi bi-filetype-js display-6 text-warning"></i>
+                            <p class="mb-0 mt-2"><strong>JavaScript</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

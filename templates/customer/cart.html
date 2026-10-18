@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}购物车 - 餐厅点餐系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-cart3"></i> 购物车</h4>
+            </div>
+            <div class="card-body">
+                {% if cart_items %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 100px;">图片</th>
+                                <th>菜品名称</th>
+                                <th style="width: 120px;">单价</th>
+                                <th style="width: 150px;">数量</th>
+                                <th style="width: 120px;">小计</th>
+                                <th style="width: 80px;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cart-items">
+                            {% for item in cart_items %}
+                            <tr data-item-id="{{ item.item_id }}">
+                                <td>
+                                    <img src="{{ item.image_url }}" alt="{{ item.name }}" 
+                                         class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;"
+                                         onerror="this.src='/static/images/default.jpg'">
+                                </td>
+                                <td>
+                                    <strong>{{ item.name }}</strong>
+                                </td>
+                                <td class="text-danger">
+                                    ¥<span class="unit-price">{{ "%.2f"|format(item.price) }}</span>
+                                </td>
+                                <td>
+                                    <div class="input-group input-group-sm">
+                                        <button class="btn btn-outline-secondary btn-minus" type="button">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <input type="number" class="form-control text-center quantity-input" 
+                                               value="{{ item.quantity }}" min="1" max="99" readonly>
+                                        <button class="btn btn-outline-secondary btn-plus" type="button">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="text-danger fw-bold">
+                                    ¥<span class="subtotal">{{ "%.2f"|format(item.subtotal) }}</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger btn-remove" type="button">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                    <button class="btn btn-outline-danger" id="clear-cart">
+                        <i class="bi bi-trash"></i> 清空购物车
+                    </button>
+                    <h4 class="mb-0">
+                        合计: <span class="text-danger" id="cart-total">¥{{ "%.2f"|format(total) }}</span>
+                    </h4>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-cart-x display-1 text-muted"></i>
+                    <p class="mt-3 text-muted">购物车是空的</p>
+                    <a href="{{ url_for('customer.menu') }}" class="btn btn-primary">
+                        <i class="bi bi-book"></i> 去点餐
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    {% if cart_items %}
+    <div class="col-lg-4">
+        <!-- 订单信息 -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-check-circle"></i> 订单信息</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('order.create') }}" id="checkout-form">
+                    <div class="mb-3">
+                        <label for="table_id" class="form-label">
+                            <i class="bi bi-table"></i> 选择桌台 <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="table_id" name="table_id" required>
+                            <option value="">请选择桌台</option>
+                            {% for table in tables %}
+                            <option value="{{ table.table_id }}">
+                                {{ table.table_number }} - {{ table.capacity }}人桌
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="remark" class="form-label">
+                            <i class="bi bi-chat-left-text"></i> 备注
+                        </label>
+                        <textarea class="form-control" id="remark" name="remark" 
+                                  rows="3" placeholder="特殊要求、忌口等..."></textarea>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>商品数量:</span>
+                        <span id="total-items">{{ cart_items|length }} 种</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="h5">订单总额:</span>
+                        <span class="h5 text-danger" id="order-total">¥{{ "%.2f"|format(total) }}</span>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> 提交订单
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 温馨提示 -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="bi bi-info-circle"></i> 温馨提示</h6>
+            </div>
+            <div class="card-body">
+                <ul class="small mb-0">
+                    <li>请确认桌台号码是否正确</li>
+                    <li>提交订单后请等待确认</li>
+                    <li>如有特殊要求请在备注中说明</li>
+                    <li>订单提交后可在"我的订单"中查看</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 更新购物车
+function updateCart(itemId, quantity) {
+    fetch('{{ url_for("customer.update_cart") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `item_id=${itemId}&quantity=${quantity}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // 更新总价
+            document.getElementById('cart-total').textContent = '¥' + data.total.toFixed(2);
+            document.getElementById('order-total').textContent = '¥' + data.total.toFixed(2);
+            
+            // 更新购物车徽章
+            updateCartBadge(data.cart_count);
+            
+            // 如果数量为0，移除该行
+            if (quantity === 0) {
+                const row = document.querySelector(`tr[data-item-id="${itemId}"]`);
+                row.remove();
+                
+                // 如果购物车为空，刷新页面
+                if (data.cart_count === 0) {
+                    location.reload();
+                }
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// 增加数量
+document.querySelectorAll('.btn-plus').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const itemId = row.dataset.itemId;
+        const input = row.querySelector('.quantity-input');
+        const quantity = parseInt(input.value) + 1;
+        const unitPrice = parseFloat(row.querySelector('.unit-price').textContent);
+        
+        if (quantity <= 99) {
+            input.value = quantity;
+            row.querySelector('.subtotal').textContent = (unitPrice * quantity).toFixed(2);
+            updateCart(itemId, quantity);
+        }
+    });
+});
+
+// 减少数量
+document.querySelectorAll('.btn-minus').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const itemId = row.dataset.itemId;
+        const input = row.querySelector('.quantity-input');
+        const quantity = parseInt(input.value) - 1;
+        const unitPrice = parseFloat(row.querySelector('.unit-price').textContent);
+        
+        if (quantity >= 1) {
+            input.value = quantity;
+            row.querySelector('.subtotal').textContent = (unitPrice * quantity).toFixed(2);
+            updateCart(itemId, quantity);
+        }
+    });
+});
+
+// 移除商品
+document.querySelectorAll('.btn-remove').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (confirm('确定要移除这个商品吗？')) {
+            const row = this.closest('tr');
+            const itemId = row.dataset.itemId;
+            updateCart(itemId, 0);
+        }
+    });
+});
+
+// 清空购物车
+document.getElementById('clear-cart')?.addEventListener('click', function() {
+    if (confirm('确定要清空购物车吗？')) {
+        fetch('{{ url_for("customer.clear_cart") }}', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
+
+// 更新购物车徽章
+function updateCartBadge(count) {
+    let badge = document.getElementById('cart-badge');
+    if (count > 0) {
+        if (!badge) {
+            const cartLink = document.querySelector('a[href="{{ url_for("customer.cart") }}"]');
+            badge = document.createElement('span');
+            badge.id = 'cart-badge';
+            badge.className = 'badge bg-danger';
+            cartLink.appendChild(badge);
+        }
+        badge.textContent = count;
+    } else if (badge) {
+        badge.remove();
+    }
+}
+
+// 表单验证
+document.getElementById('checkout-form')?.addEventListener('submit', function(e) {
+    const tableId = document.getElementById('table_id').value;
+    if (!tableId) {
+        e.preventDefault();
+        alert('请选择桌台');
+        return false;
+    }
+});
+</script>
+{% endblock %}
